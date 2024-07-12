@@ -10,6 +10,10 @@ def load_data(path):
 
 df = load_data(data_path)
 
+# Debug output to display column names
+st.write("### Data Columns")
+st.write(df.columns.tolist())  # Display column names for debugging
+
 def building_1001():
     st.title('Building 1001')
 
