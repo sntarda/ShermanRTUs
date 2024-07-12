@@ -1,10 +1,14 @@
-
 import streamlit as st
 import pandas as pd
 
-# Load data (assuming data is stored in an Excel file)
+# Load data (assuming data is stored in a CSV file)
 data_path = 'data/units_data.csv'
-df = pd.read_excel(data_path)
+
+@st.cache
+def load_data(path):
+    return pd.read_csv(path)
+
+df = load_data(data_path)
 
 def building_1057():
     st.title('Building 1057')
@@ -13,44 +17,47 @@ def building_1057():
     if st.sidebar.button("Home/Dashboard"):
         st.experimental_rerun()
     if st.sidebar.button("Add/Edit Unit"):
-        add_edit_unit()
+        add_edit_unit(df)
     if st.sidebar.button("Add Ticket"):
-        add_ticket()
+        add_ticket(df)
     
     # Display AC units in Building 1057
-    building_1057_units = df[df['Building'] == 1057]
-    st.write("## AC Units in Building 1057")
-    st.dataframe(building_1059_units)
+    if 'Building' in df.columns:
+        building_1057_units = df[df['Building'] == 1057]
+        st.write("## AC Units in Building 1057")
+        st.dataframe(building_1057_units)
 
-    # Display details for a selected unit
-    unit_ids = building_1057_units['RTU'].tolist()
-    selected_unit = st.selectbox("Select an AC Unit", unit_ids)
-    if selected_unit:
-        unit_details = building_1057_units[building_1057_units['RTU'] == selected_unit].iloc[0]
-        st.write(f"### Details for Unit {selected_unit}")
-        st.write(unit_details.to_dict())
+        # Display details for a selected unit
+        unit_ids = building_1057_units['RTU'].tolist()
+        selected_unit = st.selectbox("Select an AC Unit", unit_ids, key="unit_select")
+        if selected_unit:
+            unit_details = building_1057_units[building_1057_units['RTU'] == selected_unit].iloc[0]
+            st.write(f"### Details for Unit {selected_unit}")
+            st.write(unit_details.to_dict())
+    else:
+        st.error("The 'Building' column is missing in the data.")
 
 def add_edit_unit(df):
     st.write("### Add/Edit Unit")
     
     # Form to add or edit a unit
     with st.form(key='unit_form'):
-        rtu = st.text_input("RTU")
-        building = st.text_input("Building")
-        suite = st.text_input("Suite")
-        manufacturer = st.text_input("Manufacturer")
-        year = st.number_input("Year", min_value=1900, max_value=2100, step=1)
-        model = st.text_input("Model")
-        serial = st.text_input("Serial")
-        compressor_charge = st.text_input("Compressor Charge")
-        tonnage = st.number_input("Tonnage", min_value=0.0, step=0.1)
-        seer = st.number_input("SEER", min_value=0.0, step=0.1)
-        eer = st.number_input("EER", min_value=0.0, step=0.1)
-        heat = st.text_input("Heat")
-        heating_element = st.text_input("Heating Element")
-        power_supply = st.text_input("Power Supply")
-        routine_service = st.date_input("Routine Service")
-        status = st.selectbox("Status", ["Operational", "Repair Required", "Off", "Standby", "Due for Service", "Decommissioned", "Testing"])
+        rtu = st.text_input("RTU", key="rtu")
+        building = st.text_input("Building", key="building")
+        suite = st.text_input("Suite", key="suite")
+        manufacturer = st.text_input("Manufacturer", key="manufacturer")
+        year = st.number_input("Year", min_value=1900, max_value=2100, step=1, key="year")
+        model = st.text_input("Model", key="model")
+        serial = st.text_input("Serial", key="serial")
+        compressor_charge = st.text_input("Compressor Charge", key="compressor_charge")
+        tonnage = st.number_input("Tonnage", min_value=0.0, step=0.1, key="tonnage")
+        seer = st.number_input("SEER", min_value=0.0, step=0.1, key="seer")
+        eer = st.number_input("EER", min_value=0.0, step=0.1, key="eer")
+        heat = st.text_input("Heat", key="heat")
+        heating_element = st.text_input("Heating Element", key="heating_element")
+        power_supply = st.text_input("Power Supply", key="power_supply")
+        routine_service = st.date_input("Routine Service", key="routine_service")
+        status = st.selectbox("Status", ["Operational", "Repair Required", "Off", "Standby", "Due for Service", "Decommissioned", "Testing"], key="status")
         
         submit_button = st.form_submit_button(label='Submit')
 
@@ -75,22 +82,22 @@ def add_edit_unit(df):
             "Status": status
         }
         df = df.append(new_unit, ignore_index=True)
-        df.to_excel('data/units_data.csv', index=False)  # Save updated dataframe to Excel
+        df.to_csv(data_path, index=False)  # Save updated dataframe to CSV
         st.success("Unit added/updated successfully")
-      
+
 def add_ticket(df):
     st.write("### Add Ticket")
     
     # Form to add a ticket
     with st.form(key='ticket_form'):
-        rtu = st.text_input("RTU")
-        date_requested = st.date_input("Date Requested")
-        issue = st.text_area("Issue")
-        date_checked = st.date_input("Date Checked")
-        tech_notes = st.text_area("Tech Notes")
-        repair_status = st.selectbox("Repair Status", ["Complete", "Pending"])
-        date_repaired = st.date_input("Date Repaired")
-        cost = st.number_input("Cost", min_value=0.0, step=0.1)
+        rtu = st.text_input("RTU", key="ticket_rtu")
+        date_requested = st.date_input("Date Requested", key="date_requested")
+        issue = st.text_area("Issue", key="issue")
+        date_checked = st.date_input("Date Checked", key="date_checked")
+        tech_notes = st.text_area("Tech Notes", key="tech_notes")
+        repair_status = st.selectbox("Repair Status", ["Complete", "Pending"], key="repair_status")
+        date_repaired = st.date_input("Date Repaired", key="date_repaired")
+        cost = st.number_input("Cost", min_value=0.0, step=0.1, key="cost")
         
         submit_button = st.form_submit_button(label='Submit')
 
@@ -106,10 +113,13 @@ def add_ticket(df):
             "Date Repaired": date_repaired,
             "Cost": cost
         }
-        # Assuming there's a separate sheet or section for tickets
-        tickets_df = pd.read_excel('data/units_data.csv', sheet_name='Tickets')
+        tickets_path = 'data/tickets.csv'
+        try:
+            tickets_df = pd.read_csv(tickets_path)
+        except FileNotFoundError:
+            tickets_df = pd.DataFrame(columns=["RTU", "Date Requested", "Issue", "Date Checked", "Tech Notes", "Repair Status", "Date Repaired", "Cost"])
         tickets_df = tickets_df.append(new_ticket, ignore_index=True)
-        tickets_df.to_excel('data/units_data.csv', sheet_name='Tickets', index=False)  # Save updated dataframe to Excel
+        tickets_df.to_csv(tickets_path, index=False)  # Save updated dataframe to CSV
         st.success("Ticket added successfully")
 
 building_1057()
