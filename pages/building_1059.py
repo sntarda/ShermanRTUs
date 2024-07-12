@@ -6,9 +6,15 @@ data_path = 'data/units_data.csv'
 
 @st.cache
 def load_data(path):
-    return pd.read_csv(path)
+    df = pd.read_csv(path)
+    df.columns = df.columns.str.strip()  # Remove any leading/trailing spaces from column names
+    return df
 
 df = load_data(data_path)
+
+# Debug output to display the first few rows of the dataframe (optional, can be removed if not needed)
+st.write("### Data Preview")
+st.write(df.head())
 
 def building_1059():
     st.title('Building 1059')
@@ -25,15 +31,18 @@ def building_1059():
     if 'Building' in df.columns:
         building_1059_units = df[df['Building'] == 1059]
         st.write("## AC Units in Building 1059")
-        st.dataframe(building_1059_units)
+        if not building_1059_units.empty:
+            st.dataframe(building_1059_units)
 
-        # Display details for a selected unit
-        unit_ids = building_1059_units['RTU'].tolist()
-        selected_unit = st.selectbox("Select an AC Unit", unit_ids, key="unit_select")
-        if selected_unit:
-            unit_details = building_1059_units[building_1059_units['RTU'] == selected_unit].iloc[0]
-            st.write(f"### Details for Unit {selected_unit}")
-            st.write(unit_details.to_dict())
+            # Display details for a selected unit
+            unit_ids = building_1059_units['RTU'].tolist()
+            selected_unit = st.selectbox("Select an AC Unit", unit_ids, key="unit_select")
+            if selected_unit:
+                unit_details = building_1059_units[building_1059_units['RTU'] == selected_unit].iloc[0]
+                st.write(f"### Details for Unit {selected_unit}")
+                st.write(unit_details.to_dict())
+        else:
+            st.write("No units found for Building 1059.")
     else:
         st.error("The 'Building' column is missing in the data.")
 
