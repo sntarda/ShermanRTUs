@@ -12,9 +12,9 @@ def load_data(path):
 
 df = load_data(data_path)
 
-# Debug output to display column names
-st.write("### Data Columns")
-st.write(df.columns.tolist())  # Display column names for debugging
+# Debug output to display the first few rows of the dataframe (optional, can be removed if not needed)
+st.write("### Data Preview")
+st.write(df.head())
 
 def building_1001():
     st.title('Building 1001')
@@ -31,15 +31,18 @@ def building_1001():
     if 'Building' in df.columns:
         building_1001_units = df[df['Building'] == 1001]
         st.write("## AC Units in Building 1001")
-        st.dataframe(building_1001_units)
+        if not building_1001_units.empty:
+            st.dataframe(building_1001_units)
 
-        # Display details for a selected unit
-        unit_ids = building_1001_units['RTU'].tolist()
-        selected_unit = st.selectbox("Select an AC Unit", unit_ids, key="unit_select")
-        if selected_unit:
-            unit_details = building_1001_units[building_1001_units['RTU'] == selected_unit].iloc[0]
-            st.write(f"### Details for Unit {selected_unit}")
-            st.write(unit_details.to_dict())
+            # Display details for a selected unit
+            unit_ids = building_1001_units['RTU'].tolist()
+            selected_unit = st.selectbox("Select an AC Unit", unit_ids, key="unit_select")
+            if selected_unit:
+                unit_details = building_1001_units[building_1001_units['RTU'] == selected_unit].iloc[0]
+                st.write(f"### Details for Unit {selected_unit}")
+                st.write(unit_details.to_dict())
+        else:
+            st.write("No units found for Building 1001.")
     else:
         st.error("The 'Building' column is missing in the data.")
 
