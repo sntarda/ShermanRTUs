@@ -3,7 +3,12 @@ import pandas as pd
 
 # Load data (assuming data is stored in a CSV file)
 data_path = 'data/units_data.csv'
-df = pd.read_csv(data_path)
+
+@st.cache
+def load_data(path):
+    return pd.read_csv(path)
+
+df = load_data(data_path)
 
 def building_1001():
     st.title('Building 1001')
@@ -17,17 +22,20 @@ def building_1001():
         add_ticket(df)
     
     # Display AC units in Building 1001
-    building_1001_units = df[df['Building'] == 1001]
-    st.write("## AC Units in Building 1001")
-    st.dataframe(building_1001_units)
+    if 'Building' in df.columns:
+        building_1001_units = df[df['Building'] == 1001]
+        st.write("## AC Units in Building 1001")
+        st.dataframe(building_1001_units)
 
-    # Display details for a selected unit
-    unit_ids = building_1001_units['RTU'].tolist()
-    selected_unit = st.selectbox("Select an AC Unit", unit_ids, key="unit_select")
-    if selected_unit:
-        unit_details = building_1001_units[building_1001_units['RTU'] == selected_unit].iloc[0]
-        st.write(f"### Details for Unit {selected_unit}")
-        st.write(unit_details.to_dict())
+        # Display details for a selected unit
+        unit_ids = building_1001_units['RTU'].tolist()
+        selected_unit = st.selectbox("Select an AC Unit", unit_ids, key="unit_select")
+        if selected_unit:
+            unit_details = building_1001_units[building_1001_units['RTU'] == selected_unit].iloc[0]
+            st.write(f"### Details for Unit {selected_unit}")
+            st.write(unit_details.to_dict())
+    else:
+        st.error("The 'Building' column is missing in the data.")
 
 def add_edit_unit(df):
     st.write("### Add/Edit Unit")
@@ -74,7 +82,7 @@ def add_edit_unit(df):
             "Status": status
         }
         df = df.append(new_unit, ignore_index=True)
-        df.to_csv('data/units_data.csv', index=False)  # Save updated dataframe to CSV
+        df.to_csv(data_path, index=False)  # Save updated dataframe to CSV
         st.success("Unit added/updated successfully")
 
 def add_ticket(df):
