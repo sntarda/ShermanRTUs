@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Load data (assuming data is stored in an Excel file)
-data_path = 'data/units_data.xlsx'
+data_path = 'data/units_data.csv'
 df = pd.read_excel(data_path)
 
 def building_1001():
@@ -74,7 +74,7 @@ def add_edit_unit(df):
             "Status": status
         }
         df = df.append(new_unit, ignore_index=True)
-        df.to_excel('data/units_data.xlsx', index=False)  # Save updated dataframe to Excel
+        df.to_excel('data/units_data.csv', index=False)  # Save updated dataframe to Excel
         st.success("Unit added/updated successfully")
       
 def add_ticket(df):
@@ -106,9 +106,9 @@ def add_ticket(df):
             "Cost": cost
         }
         # Assuming there's a separate sheet or section for tickets
-        tickets_df = pd.read_excel('data/units_data.xlsx', sheet_name='Tickets')
+        tickets_df = pd.read_excel('data/units_data.csv', sheet_name='Tickets')
         tickets_df = tickets_df.append(new_ticket, ignore_index=True)
-        tickets_df.to_excel('data/units_data.xlsx', sheet_name='Tickets', index=False)  # Save updated dataframe to Excel
+        tickets_df.to_excel('data/units_data.csv', sheet_name='Tickets', index=False)  # Save updated dataframe to Excel
         st.success("Ticket added successfully")
 
 building_1001()
