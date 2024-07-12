@@ -9,8 +9,8 @@ def login():
 
     user_credentials = load_user_credentials('data/user_credentials.csv')
 
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
+    username = st.text_input("Username", key="login_username")
+    password = st.text_input("Password", type="password", key="login_password")
 
     if st.button("Login"):
         if authenticate_user(username, password, user_credentials):
