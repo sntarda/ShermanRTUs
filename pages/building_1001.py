@@ -23,7 +23,7 @@ def building_1001():
 
     # Display details for a selected unit
     unit_ids = building_1001_units['RTU'].tolist()
-    selected_unit = st.selectbox("Select an AC Unit", unit_ids)
+    selected_unit = st.selectbox("Select an AC Unit", unit_ids, key="unit_select")
     if selected_unit:
         unit_details = building_1001_units[building_1001_units['RTU'] == selected_unit].iloc[0]
         st.write(f"### Details for Unit {selected_unit}")
@@ -34,22 +34,22 @@ def add_edit_unit(df):
     
     # Form to add or edit a unit
     with st.form(key='unit_form'):
-        rtu = st.text_input("RTU")
-        building = st.text_input("Building")
-        suite = st.text_input("Suite")
-        manufacturer = st.text_input("Manufacturer")
-        year = st.number_input("Year", min_value=1900, max_value=2100, step=1)
-        model = st.text_input("Model")
-        serial = st.text_input("Serial")
-        compressor_charge = st.text_input("Compressor Charge")
-        tonnage = st.number_input("Tonnage", min_value=0.0, step=0.1)
-        seer = st.number_input("SEER", min_value=0.0, step=0.1)
-        eer = st.number_input("EER", min_value=0.0, step=0.1)
-        heat = st.text_input("Heat")
-        heating_element = st.text_input("Heating Element")
-        power_supply = st.text_input("Power Supply")
-        routine_service = st.date_input("Routine Service")
-        status = st.selectbox("Status", ["Operational", "Repair Required", "Off", "Standby", "Due for Service", "Decommissioned", "Testing"])
+        rtu = st.text_input("RTU", key="rtu")
+        building = st.text_input("Building", key="building")
+        suite = st.text_input("Suite", key="suite")
+        manufacturer = st.text_input("Manufacturer", key="manufacturer")
+        year = st.number_input("Year", min_value=1900, max_value=2100, step=1, key="year")
+        model = st.text_input("Model", key="model")
+        serial = st.text_input("Serial", key="serial")
+        compressor_charge = st.text_input("Compressor Charge", key="compressor_charge")
+        tonnage = st.number_input("Tonnage", min_value=0.0, step=0.1, key="tonnage")
+        seer = st.number_input("SEER", min_value=0.0, step=0.1, key="seer")
+        eer = st.number_input("EER", min_value=0.0, step=0.1, key="eer")
+        heat = st.text_input("Heat", key="heat")
+        heating_element = st.text_input("Heating Element", key="heating_element")
+        power_supply = st.text_input("Power Supply", key="power_supply")
+        routine_service = st.date_input("Routine Service", key="routine_service")
+        status = st.selectbox("Status", ["Operational", "Repair Required", "Off", "Standby", "Due for Service", "Decommissioned", "Testing"], key="status")
         
         submit_button = st.form_submit_button(label='Submit')
 
@@ -82,14 +82,14 @@ def add_ticket(df):
     
     # Form to add a ticket
     with st.form(key='ticket_form'):
-        rtu = st.text_input("RTU")
-        date_requested = st.date_input("Date Requested")
-        issue = st.text_area("Issue")
-        date_checked = st.date_input("Date Checked")
-        tech_notes = st.text_area("Tech Notes")
-        repair_status = st.selectbox("Repair Status", ["Complete", "Pending"])
-        date_repaired = st.date_input("Date Repaired")
-        cost = st.number_input("Cost", min_value=0.0, step=0.1)
+        rtu = st.text_input("RTU", key="ticket_rtu")
+        date_requested = st.date_input("Date Requested", key="date_requested")
+        issue = st.text_area("Issue", key="issue")
+        date_checked = st.date_input("Date Checked", key="date_checked")
+        tech_notes = st.text_area("Tech Notes", key="tech_notes")
+        repair_status = st.selectbox("Repair Status", ["Complete", "Pending"], key="repair_status")
+        date_repaired = st.date_input("Date Repaired", key="date_repaired")
+        cost = st.number_input("Cost", min_value=0.0, step=0.1, key="cost")
         
         submit_button = st.form_submit_button(label='Submit')
 
