@@ -6,9 +6,15 @@ data_path = 'data/units_data.csv'
 
 @st.cache
 def load_data(path):
-    return pd.read_csv(path)
+    df = pd.read_csv(path)
+    df.columns = df.columns.str.strip()  # Remove any leading/trailing spaces from column names
+    return df
 
 df = load_data(data_path)
+
+# Debug output to display column names
+st.write("### Data Columns")
+st.write(df.columns.tolist())  # Display column names for debugging
 
 def building_1055():
     st.title('Building 1055')
